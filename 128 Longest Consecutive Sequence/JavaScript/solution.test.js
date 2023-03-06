@@ -24,6 +24,6 @@ describe('Test solution', () => {
   });
 
   test('Returns 0 when there is no consecutive numbers', () => {
-    expect(longestConsecutive([0, 5, 8, 15, 32])).toBe(0);
+    expect(longestConsecutive([0, 5, 8, 15, 32])).toBe(1);
   });
 });
