@@ -4,10 +4,7 @@
  */
 var dailyTemperatures = function (temperatures) {
   // strategy: add each temp to a stack if the temp decreases
-  // if it increases,
-
-  // initialize the answer array with 0s
-  const answer = new Array(temperatures.length).fill(0);
+  // if it increases, pop the stack until we find a temperature higher
 
   const stack = [];
   for (const [index, temp] of temperatures.entries()) {
@@ -16,13 +13,17 @@ var dailyTemperatures = function (temperatures) {
     } else {
       while (stack.length > 0 && stack[stack.length - 1].temp < temp) {
         const top = stack.pop().index;
-        answer[top] = index - top;
+        temperatures[top] = index - top;
       }
       stack.push({ index, temp });
     }
   }
 
-  return answer;
+  while (stack.length > 0) {
+    temperatures[stack.pop().index] = 0;
+  }
+
+  return temperatures;
 };
 
 module.exports = dailyTemperatures;
