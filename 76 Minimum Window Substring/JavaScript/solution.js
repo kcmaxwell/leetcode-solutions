@@ -4,49 +4,61 @@
  * @return {string}
  */
 var minWindow = function (s, t) {
-  // count occurrences in t
-  const tCount = new Map();
-  for (let i = 0; i < t.length; i++) {
-    const char = t.at(i);
-    if (tCount.get(char)) tCount.set(char, tCount.get(char) + 1);
-    else tCount.set(char, 1);
-  }
+  // strategy: keep counts of t and the substring, grow the window until a match is found
+  // then shrink the window from the left until it is no longer a match, then repeat
 
-  // handle case where s and t are length 1
-  // if (s.length === 1 && s === t)
-  //   return s;
+  if (t === '') return '';
 
+  const tCount = count(t);
+  const window = new Map();
+
+  let have = 0;
+  const need = tCount.size;
+
+  let result = [-1, -1];
+  let resLength = Infinity;
   let left = 0;
-  let right = s.length - 1;
-  let result = '';
-  while (right < s.length) {
-    const tCopy = new Map(tCount);
-    const substring = s.substring(left, right + 1);
+  for (let right = 0; right < s.length; right++) {
+    const added = s.at(right);
 
-    for (const char of substring) {
-      if (tCopy.get(char)) tCopy.set(char, tCopy.get(char) - 1);
-    }
+    // add 1 to window for the added character
+    if (window.has(added)) window.set(added, window.get(added) + 1);
+    else window.set(added, 1);
 
-    let contains = true;
-    for (const [key, val] of tCopy) {
-      if (val > 0) contains = false;
-    }
+    if (tCount.has(added) && window.get(added) === tCount.get(added)) have++;
 
-    // if the substring contains t, update result and lower the window size by one
-    if (contains) {
-      result = substring;
-      const currentSize = right - left;
-      left = 0;
-      right = currentSize - 1;
-    }
-    // otherwise, move the window to the right by one
-    else {
+    while (have === need) {
+      if (right - left + 1 < resLength) {
+        result = [left, right];
+        resLength = right - left + 1;
+      }
+
+      const removed = s.at(left);
+      window.set(removed, window.get(removed) - 1);
+      if (tCount.has(removed) && window.get(removed) < tCount.get(removed)) {
+        have--;
+      }
+
       left++;
-      right++;
     }
   }
 
-  return result;
+  if (resLength !== Infinity) {
+    return s.substring(result[0], result[1] + 1);
+  }
+  return '';
+};
+
+const count = (s) => {
+  const map = new Map();
+
+  for (let i = 0; i < s.length; i++) {
+    const char = s.at(i);
+    if (map.get(char)) map.set(char, map.get(char) + 1);
+    else map.set(char, 1);
+  }
+
+  return map;
 };
 
 module.exports = minWindow;
