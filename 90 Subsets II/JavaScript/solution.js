@@ -3,40 +3,25 @@
  * @return {number[][]}
  */
 var subsetsWithDup = function (nums) {
-  // create map with counts of each number, then run DFS on that map
-  const map = new Map();
-
-  for (const num of nums) {
-    if (map.has(num)) map.set(num, map.get(num) + 1);
-    else map.set(num, 1);
-  }
-
   let result = [];
-  const counts = [...map].map(([key, val]) => ({ key, val }));
   const subset = [];
+  const set = new Set();
 
   const dfs = (i) => {
-    if (i >= counts.length) {
-      result.push([...subset]);
-      return;
+    if (i >= nums.length) {
+      return set.add(JSON.stringify(subset.slice().sort((a, b) => a - b)));
     }
 
-    console.log(counts[i]);
+    subset.push(nums[i]);
+    dfs(i + 1);
 
-    // choose between 1 and the max count of num
-    for (let x = counts[i].val; x > 0; x--) {
-      subset.push(counts[i].key);
-      dfs(i + 1);
-    }
-
-    // remove all instances of num from the subset
-    for (let x = counts[i].val; x > 0; x--) subset.pop();
-
-    // choose 0 of the current num
+    subset.pop();
     dfs(i + 1);
   };
 
   dfs(0);
+
+  set.forEach((s) => result.push(JSON.parse(s)));
 
   return result;
 };
