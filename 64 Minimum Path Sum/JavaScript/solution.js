@@ -3,29 +3,24 @@
  * @return {number}
  */
 var minPathSum = function (grid) {
-  const map = new Map();
+  let row = grid.length;
+  let col = grid[0].length;
 
-  const minAtPoint = (x, y) => {
-    // if point is the end, return the value at the end
-    if (x === grid.length - 1 && y === grid[0].length - 1) {
-      return grid[x][y];
+  // result stores the min values for the current row
+  let result = [0];
+
+  // loop along each row, going down 1 column at a time
+  for (let i = 0; i < row; i++) {
+    for (let j = 0; j < col; j++) {
+      if (i === 0)
+        result.push(result[j] + grid[i][j]); // at the start of each row
+      else if (j === 0) result[j + 1] += grid[i][j];
+      // along the first row only, just add the current value, no value above to worry about
+      else result[j + 1] = Math.min(result[j], result[j + 1]) + grid[i][j];
     }
+  }
 
-    // if out of bounds, return infinity
-    if (x >= grid.length || y >= grid[0].length) return Infinity;
-
-    // if this point has been reached already, return from the map
-    if (map.has(`${x},${y}`)) return map.get(`${x},${y}`);
-
-    // return the minimum of the two choices, the point to the right and the point down
-    const minHere =
-      Math.min(minAtPoint(x + 1, y), minAtPoint(x, y + 1)) + grid[x][y];
-    map.set(`${x},${y}`, minHere);
-
-    return minHere;
-  };
-
-  return minAtPoint(0, 0);
+  return result[col];
 };
 
 module.exports = minPathSum;
