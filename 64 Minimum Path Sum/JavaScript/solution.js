@@ -3,25 +3,29 @@
  * @return {number}
  */
 var minPathSum = function (grid) {
-  let result = Infinity;
+  const map = new Map();
 
-  const dfs = (x, y, total) => {
-    // if the current total is larger than the minimum so far, return
-    if (total >= result) return;
-
-    // if this is the bottom left, update result if necessary and return
+  const minAtPoint = (x, y) => {
+    // if point is the end, return the value at the end
     if (x === grid.length - 1 && y === grid[0].length - 1) {
-      result = Math.min(result, total + grid[x][y]);
-      return;
+      return grid[x][y];
     }
 
-    if (x < grid.length - 1) dfs(x + 1, y, total + grid[x][y]);
-    if (y < grid[0].length - 1) dfs(x, y + 1, total + grid[x][y]);
+    // if out of bounds, return infinity
+    if (x >= grid.length || y >= grid[0].length) return Infinity;
+
+    // if this point has been reached already, return from the map
+    if (map.has(`${x},${y}`)) return map.get(`${x},${y}`);
+
+    // return the minimum of the two choices, the point to the right and the point down
+    const minHere =
+      Math.min(minAtPoint(x + 1, y), minAtPoint(x, y + 1)) + grid[x][y];
+    map.set(`${x},${y}`, minHere);
+
+    return minHere;
   };
 
-  dfs(0, 0, 0);
-
-  return result;
+  return minAtPoint(0, 0);
 };
 
 module.exports = minPathSum;
