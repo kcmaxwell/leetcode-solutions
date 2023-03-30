@@ -5,7 +5,7 @@
  */
 var exist = function (board, word) {
   // search the board for the start of the word, then check each direction for the next letter
-  const search = (x, y, charIndex, visited) => {
+  const search = (x, y, charIndex) => {
     // found the full word, return true
     if (charIndex >= word.length) return true;
 
@@ -13,18 +13,20 @@ var exist = function (board, word) {
     if (x >= board.length || y >= board[0].length || x < 0 || y < 0)
       return false;
 
-    // if the space was already visited in this search, return false
-    if (visited.includes(`${x},${y}`)) return false;
-
     // if the letter at x, y matches the letter in the word, return any true values from the surrounding points
     if (board[x][y] === word.at(charIndex)) {
-      visited.push(`${x},${y}`);
-      return (
-        search(x + 1, y, charIndex + 1, [...visited]) ||
-        search(x - 1, y, charIndex + 1, [...visited]) ||
-        search(x, y + 1, charIndex + 1, [...visited]) ||
-        search(x, y - 1, charIndex + 1, [...visited])
-      );
+      // edit the board temporarily to show we visited this space
+      board[x][y] = '0';
+
+      const result =
+        search(x + 1, y, charIndex + 1) ||
+        search(x - 1, y, charIndex + 1) ||
+        search(x, y + 1, charIndex + 1) ||
+        search(x, y - 1, charIndex + 1);
+
+      board[x][y] = word.at(charIndex);
+
+      return result;
     }
   };
 
