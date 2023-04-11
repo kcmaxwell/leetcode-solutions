@@ -3,14 +3,14 @@
  * @return {string}
  */
 var removeStars = function (s) {
-  let result = '';
+  const stack = [];
 
   for (const char of s) {
-    if (char === '*') result = result.slice(0, -1);
-    else result = result.concat(char);
+    if (char === '*') stack.pop();
+    else stack.push(char);
   }
 
-  return result;
+  return stack.join('');
 };
 
 module.exports = removeStars;
