@@ -3,25 +3,18 @@
  * @return {boolean}
  */
 var canJump = function (nums) {
-  // memo stores if an index was already visited
-  const memo = Array(nums.length).fill(false);
+  // stores the current maximum jump
+  let curr = 0;
 
-  const jump = (index) => {
-    // if already visited, we know it did not return true, so skip
-    if (memo[index] === true) return false;
+  for (let i = 0; i < nums.length; i++) {
+    // if i is less than curr, there is no way to jump to current index
+    if (i > curr) return false;
 
-    // if at the end, return true
-    if (index === nums.length - 1) return true;
+    // update the current maximum jump
+    curr = Math.max(curr, i + nums[i]);
+  }
 
-    for (let i = nums[index]; i > 0; i--) {
-      if (jump(index + i) === true) return true;
-      memo[index + i] = true;
-    }
-
-    return false;
-  };
-
-  return jump(0);
+  return true;
 };
 
 module.exports = canJump;
