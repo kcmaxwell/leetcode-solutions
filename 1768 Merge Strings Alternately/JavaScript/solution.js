@@ -4,21 +4,20 @@
  * @return {string}
  */
 var mergeAlternately = function (word1, word2) {
-  const result = Array(word1.length + word2.length);
-  let index = 0;
-  for (let i = 0; i < Math.max(word1.length, word2.length); i++) {
-    if (i < word1.length) {
-      result[index] = word1[i];
-      index++;
-    }
+  let result = '';
 
-    if (i < word2.length) {
-      result[index] = word2[i];
-      index++;
-    }
+  for (let i = 0; i < Math.min(word1.length, word2.length); i++) {
+    result = result.concat(word1[i]);
+    result = result.concat(word2[i]);
   }
 
-  return result.join('');
+  if (word1.length > word2.length) {
+    result = result.concat(word1.slice(word2.length));
+  } else if (word2.length > word1.length) {
+    result = result.concat(word2.slice(word1.length));
+  }
+
+  return result;
 };
 
 module.exports = mergeAlternately;
